@@ -1,6 +1,9 @@
 import browsers.Browsers;
 import configuration.Configuration;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -8,11 +11,12 @@ import org.testng.annotations.Test;
 import org.xml.sax.SAXException;
 import pages.GamesPage;
 import pages.MainPage;
-import pages.WelcomeToSteamPage;
+import pages.InstallToSteamPage;
 import utils.XMLParser;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class SteamTest {
     private WebDriver driver;
@@ -20,12 +24,12 @@ public class SteamTest {
     private String localization;
     private String xmlPath;
     private XMLParser xmlParser;
+    private MainPage mainPage;
 
     @BeforeMethod
     public void createDriver() {
         driver = Browsers.getDriver(browser);
         driver.manage().window().maximize();
-        driver.get(Configuration.getData("mainUrl"));
 
         localization = System.getenv("localization");
 
@@ -36,24 +40,27 @@ public class SteamTest {
             else if (localization.equals("com")) {
                 xmlPath = "testDataCom.xml";
             }
-            else  {
-                System.out.println("Specified localization is not allowed: " + localization);
-            }
         } else {
             System.out.println("Localization is not specified");
         }
 
         xmlParser = new XMLParser();
+
+        mainPage = new MainPage(driver);
+        mainPage = mainPage.open(Configuration.getData("mainUrl"));
     }
 
     @Test
     public void loginAndDownload() {
-        WelcomeToSteamPage steamPage = new WelcomeToSteamPage(driver);
         MainPage mainPage = new MainPage(driver);
         Assert.assertTrue(mainPage.mainPageIsLoaded(), "Main page didn't load");
-        mainPage.clickInstallSteamButton();
-        Assert.assertTrue(steamPage.welcomeToSteamPageIsLoaded());
-        steamPage.clickInstallSteamNowButton();
+
+        InstallToSteamPage installToSteamPage = mainPage.clickInstallSteamButton();
+
+        Assert.assertTrue(installToSteamPage.welcomeToSteamPageIsLoaded());
+
+        installToSteamPage.clickInstallSteamNowButton();
+        installToSteamPage.waitForDownload();
     }
 
     @Test

@@ -3,8 +3,8 @@ package pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-public class WelcomeToSteamPage extends BasePage {
-    public WelcomeToSteamPage(WebDriver driver) {
+public class InstallToSteamPage extends BasePage {
+    public InstallToSteamPage(WebDriver driver) {
         super(driver);
     }
 
@@ -16,6 +16,11 @@ public class WelcomeToSteamPage extends BasePage {
 
     public void clickInstallSteamNowButton(){
         clickOnElement(installSteamNowButton);
+    }
+
+    public void waitForDownload(){
+        clickOnElement(installSteamNowButton);
+//        wai for download to be complete
     }
 
 }
