@@ -61,8 +61,8 @@ public class GamesPage extends BasePage {
         System.out.println(getDiscountList());
     }
 
-    public boolean actionPageIsLoaded() throws IOException, SAXException, ParserConfigurationException {
-        chosenPageIsLoaded(gamePageHeader, getValueFromXML());
+    public boolean actionPageIsLoaded(String toSearch) throws IOException, SAXException, ParserConfigurationException {
+        chosenPageIsLoaded(gamePageHeader, toSearch);
         return true;
     }
 

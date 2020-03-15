@@ -21,7 +21,6 @@ public class BasePage {
     private static final int TIMEOUT = Integer.parseInt(Configuration.getData("timeout"));
     private WebDriver driver;
     private WebDriverWait wait;
-    private static final String TEST_DATA = Configuration.getData("testData");
 
     public WebDriver getDriver() {
         return driver;
@@ -56,15 +55,6 @@ public class BasePage {
             return true;
         }
         return false;
-    }
-
-    public String getValueFromXML() throws ParserConfigurationException, IOException, SAXException {
-        File file = new File(TEST_DATA);
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        Document document = documentBuilder.parse(file);
-        String tagValue = document.getElementsByTagName("actionRus").item(0).getTextContent();
-        return tagValue;
     }
 
     public WebElement expectClickable(WebElement webElement) {

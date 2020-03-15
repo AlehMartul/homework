@@ -9,6 +9,7 @@ import org.xml.sax.SAXException;
 import pages.GamesPage;
 import pages.MainPage;
 import pages.WelcomeToSteamPage;
+import utils.XMLParser;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
@@ -16,12 +17,33 @@ import java.io.IOException;
 public class SteamTest {
     private WebDriver driver;
     private String browser = Configuration.getData("browser");
+    private String localization;
+    private String xmlPath;
+    private XMLParser xmlParser;
 
     @BeforeMethod
     public void createDriver() {
         driver = Browsers.getDriver(browser);
         driver.manage().window().maximize();
         driver.get(Configuration.getData("mainUrl"));
+
+        localization = System.getenv("localization");
+
+        if (localization != null) {
+            if (localization.equals("ru")) {
+                xmlPath = "testDataRu.xml";
+            }
+            else if (localization.equals("com")) {
+                xmlPath = "testDataCom.xml";
+            }
+            else  {
+                System.out.println("Specified localization is not allowed: " + localization);
+            }
+        } else {
+            System.out.println("Localization is not specified");
+        }
+
+        xmlParser = new XMLParser();
     }
 
     @Test
@@ -42,7 +64,7 @@ public class SteamTest {
         //mainPage.getGameMenu();
         //mainPage.chooseActions();
         driver.get("https://store.steampowered.com/tags/ru/%D0%AD%D0%BA%D1%88%D0%B5%D0%BD/");
-        Assert.assertTrue(gamesPage.actionPageIsLoaded(), "Action games page didn't load");
+        Assert.assertTrue(gamesPage.actionPageIsLoaded(xmlParser.getValueFromXML(xmlPath, "action")), "Action games page didn't load");
         gamesPage.clickOnTopSellers();
         //gamesPage.clickOnGameWithMaxDiscountRate();
         gamesPage.getDiscountList();
