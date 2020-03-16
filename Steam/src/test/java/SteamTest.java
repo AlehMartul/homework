@@ -1,5 +1,7 @@
 import browsers.Browsers;
 import configuration.Configuration;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.CapabilityType;
@@ -25,6 +27,7 @@ public class SteamTest {
     private String xmlPath;
     private XMLParser xmlParser;
     private MainPage mainPage;
+    private static final Logger logger = LogManager.getLogger(SteamTest.class);
 
     @BeforeMethod
     public void createDriver() {
@@ -35,13 +38,18 @@ public class SteamTest {
 
         if (localization != null) {
             if (localization.equals("ru")) {
+                logger.info("Localization is not ru");
                 xmlPath = "testDataRu.xml";
             }
             else if (localization.equals("com")) {
                 xmlPath = "testDataCom.xml";
+                logger.info("Localization is not ru");
+            }
+            else {
+                logger.info("Localization is not allowed: " + localization);
             }
         } else {
-            System.out.println("Localization is not specified");
+            logger.info("Localization is not specified");
         }
 
         xmlParser = new XMLParser();
