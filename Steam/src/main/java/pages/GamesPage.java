@@ -28,6 +28,7 @@ public class GamesPage extends BasePage {
     private By newPrice = By.xpath("//*[@id='TopSellersRows']//*[@class='discount_final_price']");
     private By gamesWithDiscount = By.xpath("//*[@id='TopSellersRows']//div[@class='discount_original_price']" +
             "//ancestor::div[@class='discount_block tab_item_discount']");
+    private By discountValue = By.xpath("//*[@id='TopSellersRows']//*[@class='discount_pct']");
 
     public boolean gamesPageIsLoaded() {
         return new BasePage(getDriver()).elementIsPresent(getDriver().findElement(topSellers));
@@ -55,9 +56,10 @@ public class GamesPage extends BasePage {
     public WebElement getMaxDiscountGame(List<WebElement> games) {
         Map<WebElement, Double> discountsOfGames = new HashMap<>();
         for(WebElement game : games) {
-            Double absoluteDiscount = Double.parseDouble(game.findElement(oldPrice).getText().replace("$", ""))
-                    - Double.parseDouble(game.findElement(newPrice).getText().replace("$", ""));
-            discountsOfGames.put(game, absoluteDiscount);
+            Double discountValueInPercentage = Double.parseDouble(game.findElement(discountValue).getText()
+                    .replace("%", "")
+                    .replace("-", ""));
+            discountsOfGames.put(game, discountValueInPercentage);
         }
 
         Map.Entry<WebElement, Double> maxDiscountInGame = null;
