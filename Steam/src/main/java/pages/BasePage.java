@@ -1,21 +1,13 @@
 package pages;
 
-import browsers.Browsers;
 import configuration.Configuration;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
-import java.io.IOException;
 
 public class BasePage {
     private static final int TIMEOUT = Integer.parseInt(Configuration.getData("timeout"));
@@ -24,10 +16,6 @@ public class BasePage {
 
     public WebDriver getDriver() {
         return driver;
-    }
-
-    public WebDriverWait getWait() {
-        return wait;
     }
 
     public BasePage(WebDriver driver) {
@@ -44,11 +32,6 @@ public class BasePage {
         getDriver().findElement(element).click();
     }
 
-    public void moveMouseToElement(By element) {
-        Actions actions = new Actions(getDriver());
-        actions.moveToElement((WebElement) element).build().perform();
-    }
-
     public boolean chosenPageIsLoaded(By element, String name) {
         String nameOfThePage = getDriver().findElement(element).getText();
         if (nameOfThePage.contains(name)) {
@@ -57,13 +40,12 @@ public class BasePage {
         return false;
     }
 
-    public WebElement expectClickable(WebElement webElement) {
-        return new WebDriverWait(Browsers.getDriver("chrome"), TIMEOUT)
-                .until(ExpectedConditions.elementToBeClickable(webElement));
-    }
-
-    public void expectVisibility(WebElement webElement) {
-        new WebDriverWait(driver, TIMEOUT).
-                until(ExpectedConditions.visibilityOf(webElement));
+    public boolean fileIsDownloaded(String name) {
+        new WebDriverWait(driver, TIMEOUT);
+        if (new File(name).exists()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

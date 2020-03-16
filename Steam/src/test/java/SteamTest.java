@@ -3,15 +3,13 @@ import configuration.Configuration;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.xml.sax.SAXException;
-import pages.GameWithMaxDiscount;
+import pages.GameWithMaxDiscountPage;
 import pages.GamesPage;
 import pages.MainPage;
 import pages.InstallToSteamPage;
@@ -19,7 +17,7 @@ import parser.XMLParser;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.List;
 
 public class SteamTest {
     private WebDriver driver;
@@ -43,8 +41,7 @@ public class SteamTest {
             } else if (localization.equals("com")) {
                 xmlPath = "testDataCom.xml";
                 logger.info("Localization is not ru");
-            }
-            else {
+            } else {
                 logger.info("Localization is not allowed: " + localization);
             }
         } else {
@@ -58,45 +55,53 @@ public class SteamTest {
     }
 
     @Test
-    public void loginAndDownload() {
+    public void loginAndDownload() throws IOException, SAXException, ParserConfigurationException {
         MainPage mainPage = new MainPage(driver);
         Assert.assertTrue(mainPage.mainPageIsLoaded(), "Main page didn't load");
+        logger.info("Main page loaded successfully");
         InstallToSteamPage installToSteamPage = mainPage.clickInstallSteamButton();
         Assert.assertTrue(installToSteamPage.welcomeToSteamPageIsLoaded());
+        logger.info("Install Steam page is opened");
         installToSteamPage.clickInstallSteamNowButton();
-        installToSteamPage.waitForDownload();
+        Assert.assertTrue(installToSteamPage.setupFileIsDownloaded(xmlParser.getValueFromXML(xmlPath, "file")),
+                "File didn't download");
+        logger.info("The file has been downloaded");
     }
 
     @Test
     public void chooseGameWithDiscount() throws ParserConfigurationException, SAXException, IOException {
         MainPage mainPage = new MainPage(driver);
-        GamesPage gamesPage = new GamesPage(driver);
-        GameWithMaxDiscount gameWithMaxDiscount =  new GameWithMaxDiscount(driver);
-        //Assert.assertTrue(mainPage.mainPageIsLoaded(), "Main page didn't load");
-        //mainPage.getGameMenu();
-        //gamesPage.clickOnAction();
-        driver.get("https://store.steampowered.com/tags/ru/%D0%AD%D0%BA%D1%88%D0%B5%D0%BD/");
+        Assert.assertTrue(mainPage.mainPageIsLoaded(), "Main page didn't load");
+        logger.info("Main page loaded successfully");
+        GamesPage gamesPage = mainPage.clickOnAction();
         Assert.assertTrue(gamesPage.actionPageIsLoaded(xmlParser.getValueFromXML(xmlPath, "action")),
                 "Action games page didn't load");
+        logger.info("Action games page is opened");
         gamesPage.clickOnTopSellers();
-        gameWithMaxDiscount.clickOnGameWithMaxDiscountRate();
-        //gamesPage.getDiscountList();
-        //gamesPage.print();
+        List<WebElement> discountGames = gamesPage.getDiscountList();
+        WebElement gameWithMaxDiscount = gamesPage.getMaxDiscountGame(discountGames);
+        Double initialPrice = gamesPage.getGameInitialPrice(gameWithMaxDiscount);
+        Double newPrice = gamesPage.getGameNewPrice(gameWithMaxDiscount);
+        Double discountValue = gamesPage.getGameDiscountValue(gameWithMaxDiscount);
+        GameWithMaxDiscountPage gameWithMaxDiscountPage = gamesPage.chooseGame(gameWithMaxDiscount);
+        Assert.assertTrue(initialPrice == gameWithMaxDiscountPage.compareOldPrice(gameWithMaxDiscount),
+                "Prices are not equals");
+        Assert.assertTrue(newPrice == gameWithMaxDiscountPage.compareNewPrice(gameWithMaxDiscount),
+                "Prices are not equals");
+        Assert.assertTrue(discountValue == gameWithMaxDiscountPage.compareDiscount(gameWithMaxDiscount),
+                "Discount values are not equals");
     }
 
     @Test
     public void chooseGameWithLowestDiscount() throws ParserConfigurationException, SAXException, IOException {
         MainPage mainPage = new MainPage(driver);
-        GamesPage gamesPage = new GamesPage(driver);
-        //Assert.assertTrue(mainPage.mainPageIsLoaded(), "Main page didn't load");
-        //mainPage.getGameMenu();
-        //mainPage.chooseIndie();
-        driver.get("https://store.steampowered.com/tags/ru/%D0%98%D0%BD%D0%B4%D0%B8/");
+        Assert.assertTrue(mainPage.mainPageIsLoaded(), "Main page didn't load");
+        logger.info("Main page loaded successfully");
+        GamesPage gamesPage = mainPage.clickOnIndie();
         Assert.assertTrue(gamesPage.indiePageIsLoaded(xmlParser.getValueFromXML(xmlPath, "indie")),
                 "Indie games page didn't load");
+        logger.info("Indie games page is opened");
         gamesPage.clickOnTopSellers();
-        gamesPage.getDiscountList();
-        gamesPage.print();
     }
 
     @AfterMethod

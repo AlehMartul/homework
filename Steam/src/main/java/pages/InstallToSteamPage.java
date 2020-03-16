@@ -19,7 +19,8 @@ public class InstallToSteamPage extends BasePage {
         return this;
     }
 
-    public void waitForDownload() {
-        clickOnElement(installSteamNowButton);
+    public boolean setupFileIsDownloaded(String name) {
+        return fileIsDownloaded(name);
     }
 }
+
