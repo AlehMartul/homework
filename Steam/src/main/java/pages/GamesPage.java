@@ -31,12 +31,19 @@ public class GamesPage extends BasePage {
         return new BasePage(getDriver()).elementIsPresent(getDriver().findElement(topSellers));
     }
 
-    public void clickOnAction() {
-
+    public GamesPage clickOnAction() {
+        clickOnElement(new MainPage(getDriver()).getActions());
+        return new GamesPage(getDriver());
     }
 
-    public void clickOnTopSellers() {
+    public GamesPage clickOnIndie() {
+        clickOnElement(new MainPage(getDriver()).getIndie());
+        return new GamesPage(getDriver());
+    }
+
+    public GamesPage clickOnTopSellers() {
         clickOnElement(topSellers);
+        return this;
     }
 
     public List<String> getDiscountList() {
@@ -53,22 +60,17 @@ public class GamesPage extends BasePage {
         return discountListWebEl;
     }
 
-    public void clickOnGameWithMaxDiscountRate() {
-        clickOnElement((By) getDiscountListWebEl().get(0));
-    }
-
     public void print() {
         System.out.println(getDiscountList());
     }
 
-    public boolean actionPageIsLoaded() throws IOException, SAXException, ParserConfigurationException {
-        chosenPageIsLoaded(gamePageHeader, getValueFromXML());
+    public boolean actionPageIsLoaded(String toSearch) throws IOException, SAXException, ParserConfigurationException {
+        chosenPageIsLoaded(gamePageHeader, toSearch);
         return true;
     }
 
-    public boolean indiePageIsLoaded(){
-        chosenPageIsLoaded(gamePageHeader, "Инди");
+    public boolean indiePageIsLoaded(String toSearch) throws IOException, SAXException, ParserConfigurationException {
+        chosenPageIsLoaded(gamePageHeader, toSearch);
         return true;
     }
-
 }

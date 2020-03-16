@@ -2,9 +2,13 @@ package pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 public class MainPage extends BasePage{
+
+    public MainPage open(String url) {
+        getDriver().get(url);
+        return new MainPage(getDriver());
+    }
 
     public MainPage(WebDriver driver) {
         super(driver);
@@ -21,20 +25,22 @@ public class MainPage extends BasePage{
         return new BasePage(getDriver()).elementIsPresent(getDriver().findElement(header));
     }
 
-    public void clickInstallSteamButton(){
+    public InstallToSteamPage clickInstallSteamButton(){
         clickOnElement(installSteamButton);
+        return new InstallToSteamPage(getDriver());
     }
 
-    public void getGameMenu(){
+    public MainPage getGameMenu(){
         moveMouseToElement(gamesButton);
+        return this;
     }
 
-    public void chooseActions(){
-        clickOnElement(actionGames);
+    public By getActions(){
+        return actionGames;
     }
 
-    public void chooseIndie(){
-        clickOnElement(indieGames);
+    public By getIndie(){
+        return indieGames;
     }
 
     }
