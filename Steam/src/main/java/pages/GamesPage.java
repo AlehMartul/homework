@@ -76,6 +76,14 @@ public class GamesPage extends BasePage {
         return new GameWithMaxDiscount(getDriver());
     }
 
+    public Double getGameInitialPrice(WebElement game) {
+        return Double.parseDouble(game.findElement(oldPrice).getText().replace("$", ""));
+    }
+
+    public Double getGameNewPrice(WebElement game) {
+        return Double.parseDouble(game.findElement(newPrice).getText().replace("$", ""));
+    }
+
     public List<WebElement> getDiscountListWebEl() {
         List<WebElement> discountListWebEl = getDriver().findElements(gamesWithDiscount);
         return discountListWebEl;

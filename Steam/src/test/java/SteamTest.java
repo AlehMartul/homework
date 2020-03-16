@@ -99,6 +99,8 @@ public class SteamTest {
         gamesPage.clickOnTopSellers();
         List<WebElement> discountGames = gamesPage.getDiscountList();
         WebElement gameWithMaxDiscount = gamesPage.getMaxDiscountGame(discountGames);
+        Double initialPrice = gamesPage.getGameInitialPrice(gameWithMaxDiscount);
+        Double newPrice = gamesPage.getGameNewPrice(gameWithMaxDiscount);
         GameWithMaxDiscount gameWithMaxDiscountPage = gamesPage.chooseGame(gameWithMaxDiscount);
     }
 
