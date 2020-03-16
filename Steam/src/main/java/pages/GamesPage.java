@@ -8,7 +8,9 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GamesPage extends BasePage {
     public GamesPage(WebDriver driver) {
@@ -46,13 +48,32 @@ public class GamesPage extends BasePage {
         return this;
     }
 
-    public List<String> getDiscountList() {
-        List<String> discountList = new ArrayList<>();
-        List<WebElement> discountListWebEl = getDriver().findElements(gamesWithDiscount);
-        for (WebElement element : discountListWebEl) {
-            discountList.add(element.getText());
+    public List<WebElement> getDiscountList() {
+        return getDriver().findElements(gamesWithDiscount);
+    }
+
+    public WebElement getMaxDiscountGame(List<WebElement> games) {
+        Map<WebElement, Double> discountsOfGames = new HashMap<>();
+        for(WebElement game : games) {
+            Double absoluteDiscount = Double.parseDouble(game.findElement(oldPrice).getText().replace("$", ""))
+                    - Double.parseDouble(game.findElement(newPrice).getText().replace("$", ""));
+            discountsOfGames.put(game, absoluteDiscount);
         }
-        return discountList;
+
+        Map.Entry<WebElement, Double> maxDiscountInGame = null;
+        for (Map.Entry<WebElement, Double> entry : discountsOfGames.entrySet())
+        {
+            if (maxDiscountInGame == null || entry.getValue().compareTo(maxDiscountInGame.getValue()) > 0)
+            {
+                maxDiscountInGame = entry;
+            }
+        }
+        return maxDiscountInGame.getKey();
+    }
+
+    public GameWithMaxDiscount chooseGame(WebElement game) {
+        game.click();
+        return new GameWithMaxDiscount(getDriver());
     }
 
     public List<WebElement> getDiscountListWebEl() {

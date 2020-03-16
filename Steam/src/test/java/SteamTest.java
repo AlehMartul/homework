@@ -3,6 +3,7 @@ import configuration.Configuration;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -20,6 +21,7 @@ import parser.XMLParser;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 public class SteamTest {
     private WebDriver driver;
@@ -95,8 +97,9 @@ public class SteamTest {
         Assert.assertTrue(gamesPage.indiePageIsLoaded(xmlParser.getValueFromXML(xmlPath, "indie")),
                 "Indie games page didn't load");
         gamesPage.clickOnTopSellers();
-        gamesPage.getDiscountList();
-        gamesPage.print();
+        List<WebElement> discountGames = gamesPage.getDiscountList();
+        WebElement gameWithMaxDiscount = gamesPage.getMaxDiscountGame(discountGames);
+        GameWithMaxDiscount gameWithMaxDiscountPage = gamesPage.chooseGame(gameWithMaxDiscount);
     }
 
     @AfterMethod
