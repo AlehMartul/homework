@@ -57,6 +57,8 @@ public class SteamTest {
     @Test
     public void loginAndDownload() throws IOException, SAXException, ParserConfigurationException {
         MainPage mainPage = new MainPage(driver);
+        List<String> gamesItems = mainPage.getGamesItems();
+        Assert.assertTrue(gamesItems.contains("Free to Play"));
         Assert.assertTrue(mainPage.mainPageIsLoaded(), "Main page didn't load");
         logger.info("Main page loaded successfully");
         InstallToSteamPage installToSteamPage = mainPage.clickInstallSteamButton();
