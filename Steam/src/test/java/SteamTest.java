@@ -1,4 +1,5 @@
 import browsers.Browsers;
+import browsers.DriverFactory;
 import configuration.Configuration;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -30,7 +31,8 @@ public class SteamTest {
 
     @BeforeMethod
     public void createDriver() {
-        driver = Browsers.getDriver(browser);
+        DriverFactory driverFactory = new DriverFactory();
+        driver = driverFactory.getInstance("firefox");
         driver.manage().window().maximize();
         localization = System.getenv("localization");
 

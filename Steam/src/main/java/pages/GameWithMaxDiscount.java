@@ -10,7 +10,7 @@ public class GameWithMaxDiscount extends BasePage{
     }
 
     public GameWithMaxDiscount clickOnGameWithMaxDiscountRate() {
-        clickOnElement((By) new GamesPage(getDriver()).getDiscountListWebEl().get(0));
+        // clickOnElement((By) new GamesPage(getDriver()).getDiscountListWebEl().get(0));
         return new GameWithMaxDiscount(getDriver());
     }
 }
